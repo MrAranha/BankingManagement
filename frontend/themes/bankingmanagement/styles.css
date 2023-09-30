@@ -1,0 +1,16 @@
+@import url('./main-layout.css');
+@import url('./views/dashboard-view.css');
+@import url('./views/banking-history-view.css');
+@import url('./views/users-view.css');
+@import url('@fontsource/arvo/index.css');    html {
+      --lumo-primary-color: hsl(214, 94%, 42%);
+      --lumo-primary-color-50pct: hsla(214, 94%, 42%, 0.5);
+      --lumo-primary-color-10pct: hsla(214, 94%, 42%, 0.1);
+      --lumo-space-xl: 1.875rem;
+      --lumo-space-l: 1.25rem;
+      --lumo-space-m: 0.625rem;
+      --lumo-space-s: 0.3125rem;
+      --lumo-space-xs: 0.1875rem;
+--lumo-font-family: Arvo;
+
+    }
