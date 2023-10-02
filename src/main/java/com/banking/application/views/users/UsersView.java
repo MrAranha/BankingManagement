@@ -1,7 +1,7 @@
 package com.banking.application.views.users;
 
-import com.banking.application.data.entity.SamplePerson;
-import com.banking.application.data.service.SamplePersonService;
+import com.banking.application.DTO.UsersDTO;
+import com.banking.application.data.service.UserService;
 import com.banking.application.views.MainLayout;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
@@ -50,7 +50,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     // (vaadin.com/designer)
 
     @Id
-    private Grid<SamplePerson> grid;
+    private Grid<UsersDTO> grid;
 
     @Id
     private TextField firstName;
@@ -74,31 +74,35 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     @Id
     private Button save;
 
-    private BeanValidationBinder<SamplePerson> binder;
+    private BeanValidationBinder<UsersDTO> binder;
 
-    private SamplePerson samplePerson;
+    private UsersDTO samplePerson;
 
-    private final SamplePersonService samplePersonService;
+    private final UserService samplePersonService;
 
-    public UsersView(SamplePersonService samplePersonService) {
+    public UsersView(UserService samplePersonService) {
         this.samplePersonService = samplePersonService;
         addClassNames("users-view");
-        grid.addColumn(SamplePerson::getFirstName).setHeader("First Name").setSortProperty("firstName")
+        grid.addColumn(UsersDTO::getuName).setHeader("Name").setSortProperty("firstName")
                 .setAutoWidth(true);
-        grid.addColumn(SamplePerson::getLastName).setHeader("Last Name").setSortProperty("lastName").setAutoWidth(true);
-        grid.addColumn(SamplePerson::getEmail).setHeader("Email").setSortProperty("email").setAutoWidth(true);
-        grid.addColumn(SamplePerson::getPhone).setHeader("Phone").setSortProperty("phone").setAutoWidth(true);
-        grid.addColumn(SamplePerson::getDateOfBirth).setHeader("Date Of Birth").setSortProperty("dateOfBirth")
+        //grid.addColumn(UsersDTO::getLastName).setHeader("Last Name").setSortProperty("lastName").setAutoWidth(true);
+        //grid.addColumn(UsersDTO::getEmail).setHeader("Email").setSortProperty("email").setAutoWidth(true);
+        //grid.addColumn(UsersDTO::getPhone).setHeader("Phone").setSortProperty("phone").setAutoWidth(true);
+        //grid.addColumn(UsersDTO::getDateOfBirth).setHeader("Date Of Birth").setSortProperty("dateOfBirth")
+        //        .setAutoWidth(true);
+        grid.addColumn(UsersDTO::getBalance).setHeader("Balance").setSortProperty("balance")
                 .setAutoWidth(true);
-        grid.addColumn(SamplePerson::getOccupation).setHeader("Occupation").setSortProperty("occupation")
-                .setAutoWidth(true);
-        grid.addColumn(SamplePerson::getRole).setHeader("Role").setSortProperty("role").setAutoWidth(true);
-        LitRenderer<SamplePerson> importantRenderer = LitRenderer.<SamplePerson>of(
+        grid.addColumn(UsersDTO::getIsAdmin).setHeader("Role").setSortProperty("role").setAutoWidth(true);
+        /*LitRenderer<UsersDTO> importantRenderer = LitRenderer.<UsersDTO>of(
                 "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};'></vaadin-icon>")
                 .withProperty("icon", important -> important.isImportant() ? "check" : "minus").withProperty("color",
                         important -> important.isImportant()
                                 ? "var(--lumo-primary-text-color)"
                                 : "var(--lumo-disabled-text-color)");
+*/
+        LitRenderer<UsersDTO> importantRenderer = LitRenderer.<UsersDTO>of(
+                        "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};'></vaadin-icon>")
+                .withProperty("icon", important -> important != null ? "check" : "minus").withProperty("color",important -> important != null ? "var(--lumo-primary-text-color)" : "var(--lumo-disabled-text-color)");
 
         grid.addColumn(importantRenderer).setHeader("Important").setAutoWidth(true);
 
@@ -111,7 +115,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getID()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(UsersView.class);
@@ -119,7 +123,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(SamplePerson.class);
+        binder = new BeanValidationBinder<>(UsersDTO.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -133,7 +137,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         save.addClickListener(e -> {
             try {
                 if (this.samplePerson == null) {
-                    this.samplePerson = new SamplePerson();
+                    this.samplePerson = new UsersDTO();
                 }
                 binder.writeBean(this.samplePerson);
                 samplePersonService.update(this.samplePerson);
@@ -157,9 +161,9 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            Optional<SamplePerson> samplePersonFromBackend = samplePersonService.get(samplePersonId.get());
-            if (samplePersonFromBackend.isPresent()) {
-                populateForm(samplePersonFromBackend.get());
+            UsersDTO samplePersonFromBackend = samplePersonService.get((int) samplePerson.getID());
+            if (samplePersonFromBackend != null) {
+                populateForm(samplePersonFromBackend);
             } else {
                 Notification.show(
                         String.format("The requested samplePerson was not found, ID = %s", samplePersonId.get()), 3000,
@@ -181,7 +185,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         populateForm(null);
     }
 
-    private void populateForm(SamplePerson value) {
+    private void populateForm(UsersDTO value) {
         this.samplePerson = value;
         binder.readBean(this.samplePerson);
 

@@ -1,7 +1,7 @@
 package com.banking.application.views.bankinghistory;
 
-import com.banking.application.data.entity.SamplePerson;
-import com.banking.application.data.service.SamplePersonService;
+import com.banking.application.DTO.UsersDTO;
+import com.banking.application.data.service.UserService;
 import com.banking.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.User;
 
 @PageTitle("Banking History")
 @Route(value = "bankingHistory", layout = MainLayout.class)
@@ -42,12 +43,12 @@ import org.springframework.data.jpa.domain.Specification;
 @Uses(Icon.class)
 public class BankingHistoryView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<UsersDTO> grid;
 
     private Filters filters;
-    private final SamplePersonService samplePersonService;
+    private final UserService samplePersonService;
 
-    public BankingHistoryView(SamplePersonService SamplePersonService) {
+    public BankingHistoryView(UserService SamplePersonService) {
         this.samplePersonService = SamplePersonService;
         setSizeFull();
         addClassNames("banking-history-view");
@@ -84,14 +85,14 @@ public class BankingHistoryView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements Specification<UsersDTO> {
 
         private final TextField name = new TextField("Name");
-        private final TextField phone = new TextField("Phone");
-        private final DatePicker startDate = new DatePicker("Date of Birth");
-        private final DatePicker endDate = new DatePicker();
-        private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
-        private final CheckboxGroup<String> roles = new CheckboxGroup<>("Role");
+        private final TextField balance = new TextField("Balance");
+        //private final DatePicker startDate = new DatePicker("Date of Birth");
+        //private final DatePicker endDate = new DatePicker();
+        //private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
+        private final TextField roles = new TextField("Role");
 
         public Filters(Runnable onSearch) {
 
@@ -101,9 +102,6 @@ public class BankingHistoryView extends Div {
                     LumoUtility.BoxSizing.BORDER);
             name.setPlaceholder("First or last name");
 
-            occupations.setItems("Insurance Clerk", "Mortarman", "Beer Coil Cleaner", "Scale Attendant");
-
-            roles.setItems("Worker", "Supervisor", "Manager", "External");
             roles.addClassName("double-width");
 
             // Action buttons
@@ -111,10 +109,7 @@ public class BankingHistoryView extends Div {
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
                 name.clear();
-                phone.clear();
-                startDate.clear();
-                endDate.clear();
-                occupations.clear();
+                balance.clear();
                 roles.clear();
                 onSearch.run();
             });
@@ -126,9 +121,9 @@ public class BankingHistoryView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, createDateRangeFilter(), occupations, roles, actions);
+            add(name, balance, roles, actions);
         }
-
+        /*
         private Component createDateRangeFilter() {
             startDate.setPlaceholder("From");
 
@@ -145,19 +140,19 @@ public class BankingHistoryView extends Div {
             return dateRangeComponent;
         }
 
+         */
+
         @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<UsersDTO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!name.isEmpty()) {
                 String lowerCaseFilter = name.getValue().toLowerCase();
                 Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")),
                         lowerCaseFilter + "%");
-                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")),
-                        lowerCaseFilter + "%");
-                predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
+                predicates.add(criteriaBuilder.or(firstNameMatch));
             }
-            if (!phone.isEmpty()) {
+            /*if (!phone.isEmpty()) {
                 String databaseColumn = "phone";
                 String ignore = "- ()";
 
@@ -177,23 +172,16 @@ public class BankingHistoryView extends Div {
                 String databaseColumn = "dateOfBirth";
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
                         root.get(databaseColumn)));
-            }
-            if (!occupations.isEmpty()) {
-                String databaseColumn = "occupation";
-                List<Predicate> occupationPredicates = new ArrayList<>();
-                for (String occupation : occupations.getValue()) {
-                    occupationPredicates
-                            .add(criteriaBuilder.equal(criteriaBuilder.literal(occupation), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(occupationPredicates.toArray(Predicate[]::new)));
+            }*/
+            if (!balance.isEmpty()) {
+                String balanceColumn = balance.getValue();
+                Predicate balanceMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("balance")), balanceColumn + "%");
+                predicates.add(criteriaBuilder.or(balanceMatch));
             }
             if (!roles.isEmpty()) {
-                String databaseColumn = "role";
-                List<Predicate> rolePredicates = new ArrayList<>();
-                for (String role : roles.getValue()) {
-                    rolePredicates.add(criteriaBuilder.equal(criteriaBuilder.literal(role), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(rolePredicates.toArray(Predicate[]::new)));
+                String roleColumn = roles.getValue();
+                Predicate roleMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("role")), roleColumn + "%");
+                predicates.add(criteriaBuilder.or(roleMatch));
             }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
@@ -219,13 +207,13 @@ public class BankingHistoryView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
+        grid = new Grid<>(UsersDTO.class, false);
         grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
+        /*grid.addColumn("lastName").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
         grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
+        grid.addColumn("dateOfBirth").setAutoWidth(true);*/
+        grid.addColumn("balance").setAutoWidth(true);
         grid.addColumn("role").setAutoWidth(true);
 
         grid.setItems(query -> samplePersonService.list(

@@ -1,6 +1,7 @@
 package com.banking.application.security;
 
 import com.banking.application.data.entity.User;
+import com.banking.application.data.service.LoginRepository;
 import com.banking.application.data.service.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final LoginRepository userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(LoginRepository userRepository) {
         this.userRepository = userRepository;
     }
 
