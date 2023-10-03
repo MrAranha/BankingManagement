@@ -1,45 +1,88 @@
 # Banking Management
+O projeto se consiste de uma API CRUD de banco, onde interage diretamente com o banco de dados MySql para poder fazer as transações bancárias
 
-This project can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+# Documentação do CRUD
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/d7ecc628-9f76-41a4-a138-d59656998766)
+O Delete, Update e Insert podem ser feitos por essa aba
+//Pra deletar precisa colocar data e um valor por não ter sido tratado um valor nulo no campo do TypeScript
 
-## Running the application
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/3e0f4a4d-0591-4389-8923-a749a40c3a38)
+Toda a consulta e Filtro podem ser realizador por essa aba
 
-The project is a standard Maven project. To run it from the command line,
-type `mvnw` (Windows), or `./mvnw` (Mac & Linux), then open
-http://localhost:8080 in your browser.
+# UML do Projeto
 
-You can also import the project to your IDE of choice as you would with any
-Maven project. Read more on [how to import Vaadin projects to different IDEs](https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code).
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/00e8b329-b34c-4101-9fd2-bcc9d6c51ecd)
 
-## Deploying to Production
 
-To create a production build, call `mvnw clean package -Pproduction` (Windows),
-or `./mvnw clean package -Pproduction` (Mac & Linux).
-This will build a JAR file with all the dependencies and front-end resources,
-ready to be deployed. The file can be found in the `target` folder after the build completes.
+# Crie uma database MySql com o nome de "banking" e cole isso no banco para pleno funcionamento da aplicação
 
-Once the JAR file is built, you can run it using
-`java -jar target/bankingmanagement-1.0-SNAPSHOT.jar`
+```
+CREATE TABLE `sample_person` (
+  `vversion` int DEFAULT NULL,
+  `id` int NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `date_of_birth` datetime DEFAULT NULL,
+  `occupation` varchar(255) DEFAULT NULL,
+  `rrole` varchar(255) DEFAULT NULL,
+  `important` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-## Project structure
 
-- `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
-  side/top bar and the main menu). This setup uses
-  [App Layout](https://vaadin.com/docs/components/app-layout).
-- `views` package in `src/main/java` contains the server-side Java views of your application.
-- `views` folder in `frontend/` contains the client-side JavaScript views of your application.
-- `themes` folder in `frontend/` contains the custom CSS styles.
+CREATE TABLE `application_user` (
+  `vversion` int DEFAULT NULL,
+  `id` int DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `hashed_password` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-## Useful links
+CREATE TABLE `transactionhistory` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Receiver` varchar(255) DEFAULT NULL,
+  `Sender` varchar(255) DEFAULT NULL,
+  `Date` datetime DEFAULT NULL,
+  `MoneySent` decimal(10,0) DEFAULT NULL,
+  `important` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-- Read the documentation at [vaadin.com/docs](https://vaadin.com/docs).
-- Follow the tutorial at [vaadin.com/docs/latest/tutorial/overview](https://vaadin.com/docs/latest/tutorial/overview).
-- Create new projects at [start.vaadin.com](https://start.vaadin.com/).
-- Search UI components and their usage examples at [vaadin.com/docs/latest/components](https://vaadin.com/docs/latest/components).
-- View use case applications that demonstrate Vaadin capabilities at [vaadin.com/examples-and-demos](https://vaadin.com/examples-and-demos).
-- Build any UI without custom CSS by discovering Vaadin's set of [CSS utility classes](https://vaadin.com/docs/styling/lumo/utility-classes). 
-- Find a collection of solutions to common use cases at [cookbook.vaadin.com](https://cookbook.vaadin.com/).
-- Find add-ons at [vaadin.com/directory](https://vaadin.com/directory).
-- Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
-- Report issues, create pull requests in [GitHub](https://github.com/vaadin).
+CREATE TABLE `user_roles` (
+  `user_id` varchar(255) DEFAULT NULL,
+  `rroles` char(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `users` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `BALANCE` decimal(10,0) DEFAULT NULL,
+  `isADMIN` tinyint(1) NOT NULL,
+  `uLogin` varchar(255) NOT NULL,
+  `uPassword` varchar(255) NOT NULL,
+  `uName` varchar(255) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `transactionhistory` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Receiver` varchar(255) DEFAULT NULL,
+  `Sender` varchar(255) DEFAULT NULL,
+  `Date` datetime DEFAULT NULL,
+  `MoneySent` decimal(10,0) DEFAULT NULL,
+  `important` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+    insert into TransactionHistory (Receiver, Sender, Date, MoneySent, important) values ('Joe Banaca', 'Patrick Braw', STR_TO_DATE('1-01-2012', '%d-%m-%Y'), 312313.02, false)
+```
