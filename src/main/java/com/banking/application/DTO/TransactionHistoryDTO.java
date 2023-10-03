@@ -23,7 +23,7 @@ public class TransactionHistoryDTO extends AbstractEntity {
     private String Sender;
     private String Receiver;
     private Double MoneySent;
-    private Date Date;
+    public Date Date;
     private boolean important;
 
     public String getSender() {

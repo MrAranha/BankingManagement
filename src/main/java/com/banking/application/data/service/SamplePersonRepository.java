@@ -27,17 +27,12 @@ public class SamplePersonRepository {
     }
 
     public void update(TransactionHistoryDTO entity) {
-        String sql = "UPDATE TransactionHistory set ";
-        sql += ("Receiver = " + entity.getReceiver());
-        if(entity.getSender() != null)
-            sql += (" AND Sender = " + entity.getSender());
-        if(entity.getMoneySent() != null)
-            sql += (" AND MoneySent = " + entity.getMoneySent());
-
-
-        sql += " WHERE ID = " + entity.getID();
-
-        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = conn.prepareStatement("UPDATE TransactionHistory set Receiver = ? AND Sender = ? AND DATE = ? AND MoneySent = ? WHERE ID = ?")) {
+            preparedStatement.setString(1, entity.getReceiver());
+            preparedStatement.setString(2, entity.getSender());
+            preparedStatement.setDate(3, new java.sql.Date(entity.getDate().getTime()));
+            preparedStatement.setDouble(4, entity.getMoneySent());
+            preparedStatement.setLong(5, entity.getID());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
