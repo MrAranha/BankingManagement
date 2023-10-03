@@ -1,7 +1,8 @@
 package com.banking.application.views.bankinghistory;
 
-import com.banking.application.DTO.UsersDTO;
-import com.banking.application.data.service.UserService;
+import com.banking.application.DTO.TransactionHistoryDTO;
+import com.banking.application.data.entity.SamplePerson;
+import com.banking.application.data.service.SamplePersonService;
 import com.banking.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.User;
 
 @PageTitle("Banking History")
 @Route(value = "bankingHistory", layout = MainLayout.class)
@@ -43,12 +43,12 @@ import org.springframework.security.core.userdetails.User;
 @Uses(Icon.class)
 public class BankingHistoryView extends Div {
 
-    private Grid<UsersDTO> grid;
+    private Grid<TransactionHistoryDTO> grid;
 
     private Filters filters;
-    private final UserService samplePersonService;
+    private final SamplePersonService samplePersonService;
 
-    public BankingHistoryView(UserService SamplePersonService) {
+    public BankingHistoryView(SamplePersonService SamplePersonService) {
         this.samplePersonService = SamplePersonService;
         setSizeFull();
         addClassNames("banking-history-view");
@@ -85,14 +85,12 @@ public class BankingHistoryView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<UsersDTO> {
+    public static class Filters extends Div implements Specification<TransactionHistoryDTO> {
 
-        private final TextField name = new TextField("Name");
-        private final TextField balance = new TextField("Balance");
-        //private final DatePicker startDate = new DatePicker("Date of Birth");
-        //private final DatePicker endDate = new DatePicker();
-        //private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
-        private final TextField roles = new TextField("Role");
+        private final TextField Sender = new TextField("Sender");
+        private final TextField Receiver = new TextField("Receiver");
+        private final DatePicker Date = new DatePicker("Date");
+        private final DatePicker endDate = new DatePicker();
 
         public Filters(Runnable onSearch) {
 
@@ -100,17 +98,15 @@ public class BankingHistoryView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            name.setPlaceholder("First or last name");
-
-            roles.addClassName("double-width");
+            Sender.setPlaceholder("Primeiro ou último nome");
 
             // Action buttons
             Button resetBtn = new Button("Reset");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
-                name.clear();
-                balance.clear();
-                roles.clear();
+                Sender.clear();
+                Receiver.clear();
+                Date.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -121,67 +117,49 @@ public class BankingHistoryView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, balance, roles, actions);
+            add(Sender, Receiver, createDateRangeFilter(), actions);
         }
-        /*
+
         private Component createDateRangeFilter() {
-            startDate.setPlaceholder("From");
+            Date.setPlaceholder("From");
 
             endDate.setPlaceholder("To");
 
             // For screen readers
-            startDate.setAriaLabel("From date");
-            endDate.setAriaLabel("To date");
+            Date.setAriaLabel("From date");
 
-            FlexLayout dateRangeComponent = new FlexLayout(startDate, new Text(" – "), endDate);
+            FlexLayout dateRangeComponent = new FlexLayout(Date, new Text(" – "), endDate);
             dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
             dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
 
             return dateRangeComponent;
         }
 
-         */
-
         @Override
-        public Predicate toPredicate(Root<UsersDTO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<TransactionHistoryDTO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!name.isEmpty()) {
-                String lowerCaseFilter = name.getValue().toLowerCase();
-                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")),
+            if (!Sender.isEmpty()) {
+                String lowerCaseFilter = Sender.getValue().toLowerCase();
+                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("Sender")),
                         lowerCaseFilter + "%");
                 predicates.add(criteriaBuilder.or(firstNameMatch));
             }
-            /*if (!phone.isEmpty()) {
-                String databaseColumn = "phone";
-                String ignore = "- ()";
-
-                String lowerCaseFilter = ignoreCharacters(ignore, phone.getValue().toLowerCase());
-                Predicate phoneMatch = criteriaBuilder.like(
-                        ignoreCharacters(ignore, criteriaBuilder, criteriaBuilder.lower(root.get(databaseColumn))),
-                        "%" + lowerCaseFilter + "%");
-                predicates.add(phoneMatch);
-
+            if (!Receiver.isEmpty()) {
+                String lowerCaseFilter = Receiver.getValue().toLowerCase();
+                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("Receiver")),
+                        lowerCaseFilter + "%");
+                predicates.add(criteriaBuilder.or(firstNameMatch));
             }
-            if (startDate.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
+            if (Date.getValue() != null) {
+                String databaseColumn = "Date";
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(databaseColumn),
-                        criteriaBuilder.literal(startDate.getValue())));
+                        criteriaBuilder.literal(Date.getValue())));
             }
             if (endDate.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
+                String databaseColumn = "Date";
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
                         root.get(databaseColumn)));
-            }*/
-            if (!balance.isEmpty()) {
-                String balanceColumn = balance.getValue();
-                Predicate balanceMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("balance")), balanceColumn + "%");
-                predicates.add(criteriaBuilder.or(balanceMatch));
-            }
-            if (!roles.isEmpty()) {
-                String roleColumn = roles.getValue();
-                Predicate roleMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("role")), roleColumn + "%");
-                predicates.add(criteriaBuilder.or(roleMatch));
             }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
@@ -195,7 +173,7 @@ public class BankingHistoryView extends Div {
         }
 
         private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-                Expression<String> inExpression) {
+                                                    Expression<String> inExpression) {
             Expression<String> expression = inExpression;
             for (int i = 0; i < characters.length(); i++) {
                 expression = criteriaBuilder.function("replace", String.class, expression,
@@ -207,14 +185,12 @@ public class BankingHistoryView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(UsersDTO.class, false);
-        grid.addColumn("firstName").setAutoWidth(true);
-        /*grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);*/
-        grid.addColumn("balance").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
+        grid = new Grid<>(TransactionHistoryDTO.class, false);
+        grid.addColumn("ID").setAutoWidth(true);
+        grid.addColumn("sender").setAutoWidth(true);
+        grid.addColumn("receiver").setAutoWidth(true);
+        grid.addColumn("moneySent").setAutoWidth(true);
+        grid.addColumn("date").setAutoWidth(true);
 
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),

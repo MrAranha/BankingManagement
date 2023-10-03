@@ -1,43 +1,42 @@
 package com.banking.application.data.service;
 
-import com.banking.application.data.entity.SamplePerson;
-import java.util.Optional;
+import com.banking.application.DTO.TransactionHistoryDTO;
+import com.banking.application.DTO.UsersDTO;
+import com.banking.application.views.bankinghistory.BankingHistoryView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Optional;
+import java.util.logging.Filter;
 
 @Service
 public class SamplePersonService {
-
-    private final SamplePersonRepository repository;
-
-    public SamplePersonService(SamplePersonRepository repository) {
-        this.repository = repository;
+    private final SamplePersonRepository userRepository;
+    public SamplePersonService(SamplePersonRepository userRepository){
+        this.userRepository = userRepository;
+    }
+    public TransactionHistoryDTO get(long id) {
+        return userRepository.get(id);
+    }
+    public void delete(long id) {
+        userRepository.delete(id);
+    };
+    public void update(TransactionHistoryDTO id) {
+        userRepository.update(id);
+    };
+    public void add(String sender, String Receiver, Date Date, Double MoneySent) {
+        userRepository.add(sender, Receiver, Date, MoneySent);
+    };
+    public Page<TransactionHistoryDTO> list(Pageable pageable) {
+        return userRepository.list(pageable);
     }
 
-    public Optional<SamplePerson> get(Long id) {
-        return repository.findById(id);
+    public Page<TransactionHistoryDTO> list(Pageable pageable, BankingHistoryView.Filters filter) {
+        return userRepository.list(pageable, filter);
     }
-
-    public SamplePerson update(SamplePerson entity) {
-        return repository.save(entity);
-    }
-
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
-
-    public Page<SamplePerson> list(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
-
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
-        return repository.findAll(filter, pageable);
-    }
-
-    public int count() {
-        return (int) repository.count();
-    }
-
 }

@@ -26,13 +26,11 @@ export class UsersView extends LitElement {
       <div class="editor-layout">
         <div class="editor">
           <vaadin-form-layout>
-            <vaadin-text-field label="First name" id="firstName"></vaadin-text-field
-            ><vaadin-text-field label="Last name" id="lastName"></vaadin-text-field
-            ><vaadin-text-field label="Email" id="email"></vaadin-text-field
-            ><vaadin-text-field label="Phone" id="phone"></vaadin-text-field
-            ><vaadin-date-picker label="Date of birth" id="dateOfBirth"></vaadin-date-picker
-            ><vaadin-text-field label="Occupation" id="occupation"></vaadin-text-field
-            ><vaadin-text-field label="Role" id="role"></vaadin-text-field
+            <vaadin-text-field label="ID" id="ID"></vaadin-text-field
+            ><vaadin-text-field label="Sender" id="Sender"></vaadin-text-field
+            ><vaadin-text-field label="Receiver" id="Receiver"></vaadin-text-field
+            ><vaadin-text-field label="Money Sent" id="MoneySent"></vaadin-text-field
+            ><vaadin-date-picker label="Date" id="Date"></vaadin-date-picker
             ><vaadin-checkbox id="important" label="Important"></vaadin-checkbox>
           </vaadin-form-layout>
         </div>

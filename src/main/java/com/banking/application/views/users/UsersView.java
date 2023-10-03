@@ -1,13 +1,12 @@
 package com.banking.application.views.users;
 
-import com.banking.application.DTO.UsersDTO;
-import com.banking.application.data.service.UserService;
+import com.banking.application.DTO.TransactionHistoryDTO;
+import com.banking.application.data.service.SamplePersonService;
 import com.banking.application.views.MainLayout;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.Uses;
@@ -19,7 +18,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.template.Id;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.LitRenderer;
@@ -29,6 +28,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import jakarta.annotation.security.RolesAllowed;
+
+import java.awt.*;
+import java.util.Date;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -50,22 +52,18 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     // (vaadin.com/designer)
 
     @Id
-    private Grid<UsersDTO> grid;
+    private Grid<TransactionHistoryDTO> grid;
 
     @Id
-    private TextField firstName;
+    private TextField ID;
     @Id
-    private TextField lastName;
+    private TextField Sender;
     @Id
-    private TextField email;
+    private TextField Receiver;
     @Id
-    private TextField phone;
+    private NumberField MoneySent;
     @Id
-    private DatePicker dateOfBirth;
-    @Id
-    private TextField occupation;
-    @Id
-    private TextField role;
+    private DatePicker Date;
     @Id
     private Checkbox important;
 
@@ -74,37 +72,26 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     @Id
     private Button save;
 
-    private BeanValidationBinder<UsersDTO> binder;
+    private BeanValidationBinder<TransactionHistoryDTO> binder;
 
-    private UsersDTO samplePerson;
+    private TransactionHistoryDTO samplePerson;
 
-    private final UserService samplePersonService;
+    private final SamplePersonService samplePersonService;
 
-    public UsersView(UserService samplePersonService) {
+    public UsersView(SamplePersonService samplePersonService) {
         this.samplePersonService = samplePersonService;
         addClassNames("users-view");
-        grid.addColumn(UsersDTO::getuName).setHeader("Name").setSortProperty("firstName")
+        grid.addColumn(TransactionHistoryDTO::getSender).setHeader("ID").setSortProperty("ID")
                 .setAutoWidth(true);
-        //grid.addColumn(UsersDTO::getLastName).setHeader("Last Name").setSortProperty("lastName").setAutoWidth(true);
-        //grid.addColumn(UsersDTO::getEmail).setHeader("Email").setSortProperty("email").setAutoWidth(true);
-        //grid.addColumn(UsersDTO::getPhone).setHeader("Phone").setSortProperty("phone").setAutoWidth(true);
-        //grid.addColumn(UsersDTO::getDateOfBirth).setHeader("Date Of Birth").setSortProperty("dateOfBirth")
-        //        .setAutoWidth(true);
-        grid.addColumn(UsersDTO::getBalance).setHeader("Balance").setSortProperty("balance")
+        grid.addColumn(TransactionHistoryDTO::getSender).setHeader("Sender").setSortProperty("Sender")
                 .setAutoWidth(true);
-        grid.addColumn(UsersDTO::getIsAdmin).setHeader("Role").setSortProperty("role").setAutoWidth(true);
-        /*LitRenderer<UsersDTO> importantRenderer = LitRenderer.<UsersDTO>of(
-                "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};'></vaadin-icon>")
-                .withProperty("icon", important -> important.isImportant() ? "check" : "minus").withProperty("color",
-                        important -> important.isImportant()
-                                ? "var(--lumo-primary-text-color)"
-                                : "var(--lumo-disabled-text-color)");
-*/
-        LitRenderer<UsersDTO> importantRenderer = LitRenderer.<UsersDTO>of(
+        grid.addColumn(TransactionHistoryDTO::getReceiver).setHeader("Receiver").setSortProperty("Receiver").setAutoWidth(true);
+        grid.addColumn(TransactionHistoryDTO::getDate).setHeader("Date").setSortProperty("Date").setAutoWidth(true);
+        grid.addColumn(TransactionHistoryDTO::getMoneySent).setHeader("MoneySent").setSortProperty("MoneySent")
+                .setAutoWidth(true);
+        LitRenderer<TransactionHistoryDTO> importantRenderer = LitRenderer.<TransactionHistoryDTO>of(
                         "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};'></vaadin-icon>")
                 .withProperty("icon", important -> important != null ? "check" : "minus").withProperty("color",important -> important != null ? "var(--lumo-primary-text-color)" : "var(--lumo-disabled-text-color)");
-
-        grid.addColumn(importantRenderer).setHeader("Important").setAutoWidth(true);
 
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
@@ -123,7 +110,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(UsersDTO.class);
+        binder = new BeanValidationBinder<>(TransactionHistoryDTO.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -137,7 +124,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         save.addClickListener(e -> {
             try {
                 if (this.samplePerson == null) {
-                    this.samplePerson = new UsersDTO();
+                    this.samplePerson = new TransactionHistoryDTO();
                 }
                 binder.writeBean(this.samplePerson);
                 samplePersonService.update(this.samplePerson);
@@ -161,7 +148,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            UsersDTO samplePersonFromBackend = samplePersonService.get((int) samplePerson.getID());
+            TransactionHistoryDTO samplePersonFromBackend = samplePersonService.get((int) samplePerson.getID());
             if (samplePersonFromBackend != null) {
                 populateForm(samplePersonFromBackend);
             } else {
@@ -185,7 +172,7 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
         populateForm(null);
     }
 
-    private void populateForm(UsersDTO value) {
+    private void populateForm(TransactionHistoryDTO value) {
         this.samplePerson = value;
         binder.readBean(this.samplePerson);
 
