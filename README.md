@@ -2,16 +2,16 @@
 O projeto se consiste de uma API CRUD de banco, onde interage diretamente com o banco de dados MySql para poder fazer as transações bancárias
 
 # Documentação do CRUD
-![image](https://github.com/MrAranha/BankingManagement/assets/101605425/d7ecc628-9f76-41a4-a138-d59656998766)
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/3d8c99a4-9c0f-4924-bf7b-884737eb6647)
 O Delete, Update e Insert podem ser feitos por essa aba
 //Pra deletar precisa colocar data e um valor por não ter sido tratado um valor nulo no campo do TypeScript
-
-![image](https://github.com/MrAranha/BankingManagement/assets/101605425/3e0f4a4d-0591-4389-8923-a749a40c3a38)
+-----------------------------------------------------------------------------------------------------------
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/b1231476-ff08-4293-ab61-f940bd2cd8e2)
 Toda a consulta e Filtro podem ser realizador por essa aba
 
 # UML do Projeto
 
-![image](https://github.com/MrAranha/BankingManagement/assets/101605425/00e8b329-b34c-4101-9fd2-bcc9d6c51ecd)
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/d534933a-78f3-4fab-8e79-b290c4afd04d)
 
 
 # Crie uma database MySql com o nome de "banking" e cole isso no banco para pleno funcionamento da aplicação
