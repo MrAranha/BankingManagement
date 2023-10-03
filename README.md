@@ -3,10 +3,13 @@ O projeto se consiste de uma API CRUD de banco, onde interage diretamente com o 
 
 # Documentação do CRUD
 ![image](https://github.com/MrAranha/BankingManagement/assets/101605425/3d8c99a4-9c0f-4924-bf7b-884737eb6647)
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/56093ddb-3a19-46f0-9688-ee29ec494987)
+
 O Delete, Update e Insert podem ser feitos por essa aba
 //Pra deletar precisa colocar data e um valor por não ter sido tratado um valor nulo no campo do TypeScript
 -----------------------------------------------------------------------------------------------------------
 ![image](https://github.com/MrAranha/BankingManagement/assets/101605425/b1231476-ff08-4293-ab61-f940bd2cd8e2)
+![image](https://github.com/MrAranha/BankingManagement/assets/101605425/f4a72ae9-40c9-4f50-958f-a0297ec2ed5c)
 Toda a consulta e Filtro podem ser realizador por essa aba
 
 # UML do Projeto
