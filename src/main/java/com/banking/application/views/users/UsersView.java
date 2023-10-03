@@ -54,17 +54,11 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     @Id
     private Grid<TransactionHistoryDTO> grid;
 
-    @Id
     private TextField ID;
-    @Id
     private TextField Sender;
-    @Id
     private TextField Receiver;
-    @Id
     private NumberField MoneySent;
-    @Id
     private DatePicker Date;
-    @Id
     private Checkbox important;
 
     @Id
@@ -148,7 +142,8 @@ public class UsersView extends LitTemplate implements HasStyle, BeforeEnterObser
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            TransactionHistoryDTO samplePersonFromBackend = samplePersonService.get((int) samplePerson.getID());
+            TransactionHistoryDTO samplePersonFromBackend;
+            samplePersonFromBackend = samplePersonService.get(samplePersonId.get());
             if (samplePersonFromBackend != null) {
                 populateForm(samplePersonFromBackend);
             } else {

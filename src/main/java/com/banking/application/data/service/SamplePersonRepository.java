@@ -73,6 +73,7 @@ public class SamplePersonRepository {
 
     public void delete(long id) {
         try (PreparedStatement preparedStatement = conn.prepareStatement("delete from TransactionHistory where ID = " + id)) {
+            preparedStatement.executeUpdate();
             return;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,7 +122,7 @@ public class SamplePersonRepository {
 
     private TransactionHistoryDTO mapUser(ResultSet resultSet) throws SQLException {
         TransactionHistoryDTO user = new TransactionHistoryDTO();
-        user.setID(resultSet.getInt("ID"));
+        user.setID(resultSet.getLong("ID"));
         user.setDate(resultSet.getDate("Date"));
         user.setReceiver(resultSet.getString("Receiver"));
         user.setMoneySent(resultSet.getDouble("MoneySent"));

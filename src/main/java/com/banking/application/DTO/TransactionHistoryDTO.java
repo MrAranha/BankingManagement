@@ -7,10 +7,19 @@ import jakarta.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class TransactionHistoryDTO {
+public class TransactionHistoryDTO extends AbstractEntity {
+    public TransactionHistoryDTO(){
 
+    }
+    public TransactionHistoryDTO(Long Id, String Sender, String Receiver, Double MoneySent, Date Date) {
+        this.ID = Id;
+        this.Sender = Sender;
+        this.Receiver = Receiver;
+        this.MoneySent = MoneySent;
+        this.Date = Date;
+    }
     @Id
-    private int ID;
+    private Long ID;
     private String Sender;
     private String Receiver;
     private Double MoneySent;
@@ -55,11 +64,11 @@ public class TransactionHistoryDTO {
         Date = date;
     }
 
-    public int getID() {
+    public Long getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(Long ID) {
         this.ID = ID;
     }
 }

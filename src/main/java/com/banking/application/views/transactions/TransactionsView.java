@@ -20,6 +20,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 
 import javax.sound.midi.Receiver;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -45,6 +46,9 @@ public class TransactionsView extends Composite<VerticalLayout> {
         TextField textField2 = new TextField();
         HorizontalLayout layoutRow3 = new HorizontalLayout();
         NumberField textField4 = new NumberField();
+        NumberField textField5 = new NumberField();
+        com.vaadin.flow.component.checkbox.Checkbox checkbox = new com.vaadin.flow.component.checkbox.Checkbox();
+        com.vaadin.flow.component.checkbox.Checkbox checkboxUpdate = new com.vaadin.flow.component.checkbox.Checkbox();
         HorizontalLayout layoutRow4 = new HorizontalLayout();
         Button buttonPrimary = new Button();
         VerticalLayout layoutColumn6 = new VerticalLayout();
@@ -61,7 +65,11 @@ public class TransactionsView extends Composite<VerticalLayout> {
         layoutRow2.setFlexGrow(1.0, layoutColumn3);
         layoutColumn3.setWidth(null);
         textField.setLabel("Sender");
+        textField5.setLabel("ID");
+        checkbox.setLabel("Delete?");
+        checkboxUpdate.setLabel("Update?");
         textField.setWidthFull();
+        textField5.setWidthFull();
         datePicker.setLabel("Date");
         datePicker.setWidthFull();
         layoutRow2.setFlexGrow(1.0, layoutColumn4);
@@ -84,6 +92,7 @@ public class TransactionsView extends Composite<VerticalLayout> {
         layoutColumn2.add(layoutRow2);
         layoutRow2.add(layoutColumn3);
         layoutColumn3.add(textField);
+        layoutColumn3.add(textField5);
         layoutColumn3.add(datePicker);
         layoutRow2.add(layoutColumn4);
         layoutColumn4.add(textField2);
@@ -91,8 +100,10 @@ public class TransactionsView extends Composite<VerticalLayout> {
         layoutColumn4.add(textField4);
         layoutColumn2.add(layoutRow4);
         layoutRow4.add(buttonPrimary);
+        layoutRow4.add(checkbox);
+        layoutRow4.add(checkboxUpdate);
         layoutRow.add(layoutColumn6);
         _transaction = transaction;
-        buttonPrimary.addClickListener(e -> _transaction.addTransaction(textField.getValue(), textField2.getValue(), Date.from((datePicker.getValue()).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), textField4.getValue()));
+        buttonPrimary.addClickListener(e -> _transaction.addTransaction(((long)(double)textField5.getValue()), textField.getValue(), textField2.getValue(), Date.from((datePicker.getValue()).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), textField4.getValue(), checkbox.getValue(), checkboxUpdate.getValue()));
     }
 }
